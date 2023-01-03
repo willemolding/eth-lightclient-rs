@@ -9,7 +9,7 @@ use ssz_rs::prelude::Vector;
 /// Used to compared adjacent `SyncCommitteePeriodUpdate` messages
 ///
 /// Returns `Ok(())` if the two updates are adjacent and consistent. If the prev_update was trusted then according to the
-/// light client protocol it is not ok to trust the second update as well.
+/// light client protocol it is now ok to trust the second update as well.
 ///
 /// The validators_root uniquely identifies which chain these updates must belong to. Use `crate::constants::mainnet::VALIDATORS_ROOT`
 /// for the Ethereum beacon chain mainnet
