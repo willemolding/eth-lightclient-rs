@@ -10,8 +10,11 @@ const B: &[u8] = include_bytes!(
 
 #[test]
 fn can_check_valid_transition() -> Result<(), String> {
+    let current_committee = eth_lightclient::SyncCommitteePeriodUpdate::try_from(A)
+        .unwrap()
+        .next_sync_committee;
     eth_lightclient::check_sync_committee_period_update(
-        eth_lightclient::SyncCommitteePeriodUpdate::try_from(A).unwrap(),
+        current_committee,
         eth_lightclient::SyncCommitteePeriodUpdate::try_from(B).unwrap(),
         eth_lightclient::H256(VALIDATORS_ROOT),
     )
@@ -22,9 +25,12 @@ fn can_check_invalid_transition() {
     let mut b_fail = B.to_vec();
     b_fail[100] = 0x00; // zero out a random byte
 
+    let current_committee = eth_lightclient::SyncCommitteePeriodUpdate::try_from(A)
+        .unwrap()
+        .next_sync_committee;
     assert_eq!(
         eth_lightclient::check_sync_committee_period_update(
-            eth_lightclient::SyncCommitteePeriodUpdate::try_from(A).unwrap(),
+            current_committee,
             eth_lightclient::SyncCommitteePeriodUpdate::try_from(b_fail.as_slice()).unwrap(),
             eth_lightclient::H256(VALIDATORS_ROOT),
         ),

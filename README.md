@@ -43,8 +43,10 @@ const B: &[u8] = include_bytes!(
     "../tests/sync-updates/0x78ae69239826edd5ac0abfe3a69e916e7479ad44e834e35a08e4df7601732a85"
 );
 
+let current_committee = eth_lightclient::SyncCommitteePeriodUpdate::try_from(A).unwrap().next_sync_committee;
+
 check_sync_committee_period_update(
-    SyncCommitteePeriodUpdate::try_from(A).unwrap(),
+    current_committee,
     SyncCommitteePeriodUpdate::try_from(B).unwrap(),
     H256(VALIDATORS_ROOT),
 ) // returns Ok(())

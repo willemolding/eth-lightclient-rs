@@ -6,15 +6,15 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use ssz_rs::prelude::Vector;
 
-/// Used to compared adjacent `SyncCommitteePeriodUpdate` messages
+/// Used to verify a new sync commitee update given the current sync committee
 ///
-/// Returns `Ok(())` if the two updates are adjacent and consistent. If the prev_update was trusted then according to the
-/// light client protocol it is now ok to trust the second update as well.
+/// Returns `Ok(())` if the new update has been correctly signed by the committee. If the `current_sync_committee` was trusted then according to the
+/// light client protocol it is now ok to trust the update as well (which contains the sync committee for the next update).
 ///
-/// The validators_root uniquely identifies which chain these updates must belong to. Use `crate::constants::mainnet::VALIDATORS_ROOT`
+/// The validators_root uniquely identifies which chain the update must belong to. Use `crate::constants::mainnet::VALIDATORS_ROOT`
 /// for the Ethereum beacon chain mainnet
 pub fn check_sync_committee_period_update(
-    prev_update: SyncCommitteePeriodUpdate,
+    current_sync_committee: SyncCommittee,
     update: SyncCommitteePeriodUpdate,
     validators_root: H256,
 ) -> Result<(), String> {
@@ -37,8 +37,6 @@ pub fn check_sync_committee_period_update(
         FINALIZED_ROOT_DEPTH,
         FINALIZED_ROOT_INDEX,
     )?;
-
-    let current_sync_committee = prev_update.next_sync_committee;
 
     verify_signed_header(
         sync_committee_bits,
